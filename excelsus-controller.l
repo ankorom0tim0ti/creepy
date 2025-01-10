@@ -328,7 +328,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFRR* (+ PFRR *THR*)) (> *MFFL* (+ PFFL *THR*)))
+                            (if (and (> *MFRR* (- PFRR *THR*)) (> *MFFL* (+ PFFL *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -366,7 +366,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (+ PFFR *THR*)))
+                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (- PFFR *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
