@@ -17,7 +17,7 @@
 (setq *HRR* -60)
 (setq *HRL* -60)
 
-(setq *LU* 80)
+(setq *LU* 60)
 
 ;; force of leg sensor
 (setq *FFR* '(0.0 0.0 0.0 0.0))
