@@ -32,7 +32,7 @@
 (setq *RFRL* 0)
 
 ;; threshold of force
-(setq *THR* 16)
+(setq *THR* 24)
 
 ;; average force of leg sensor
 (setq *MFFR* 0.0)
