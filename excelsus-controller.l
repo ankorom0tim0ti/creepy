@@ -1168,7 +1168,7 @@
 
 (ros::ros-info "Excelsus is now initialized")
 (send *ri* :servo-on) ;; activate servo motors
-(unix:usleep 20000) ;; This sleep is needed for reflect command to Excelsus
+(ros::duration-sleep 0.2) ;; This sleep is needed for reflect command to Excelsus
 (ros::ros-info "Actuator was activated ")
 (ros::subscribe *cmd_topic* geometry_msgs::Twist #'cmd_cb )
 
