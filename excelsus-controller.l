@@ -253,8 +253,8 @@
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
-                                (setf PFFR *MFFR*)
-                                (setf PFRL *MFRL*)
+                                (progn (setf PFFR *MFFR*)
+                                (setf PFRL *MFRL*))
                             )
                         )
                         (ros::ros-info "pressure of legs in sub roop front right: ~A ~A ~A ~A" *MFFR* PFFR *MFRL* PFRl)
@@ -288,8 +288,8 @@
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
-                                (setf PFFL *MFFL*)
-                                (setf PFRR *MFRR*)
+                                (progn (setf PFFL *MFFL*)
+                                (setf PFRR *MFRR*))
                             )
                         )
                         (ros::ros-info "pressure of legs in sub roop front left: ~A ~A ~A ~A" *MFFL* PFFL *MFRR* PFRR)
@@ -323,8 +323,8 @@
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
-                                (setf PFRR *MFRR*)
-                                (setf PFFL *MFFL*)
+                                (progn (setf PFRR *MFRR*)
+                                (setf PFFL *MFFL*))
                             )
                         )
                         (ros::ros-info "pressure of legs in sub roop rear right: ~A ~A ~A ~A" *MFRR* PFRR *MFFL* PFFL)
@@ -358,8 +358,8 @@
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
-                                (setf PFRL *MFRL*)
-                                (setf PFFR *MFFR*)
+                                (progn (setf PFRL *MFRL*)
+                                (setf PFFR *MFFR*))
                             )
                         )
                         (ros::ros-info "pressure of legs in sub roop rear left: ~A ~A ~A ~A" *MFRL* PFRL *MFFR* PFFR)
