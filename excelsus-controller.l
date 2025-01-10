@@ -1021,11 +1021,11 @@
 )
 
 (defun walk-rotate-right ()
-    (walk-rotate #f(-47.6 82.4 -82.4 -47.6 82.4 47.6 47.6 -82.4) (list 0 2 3 1) 1 5) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
+    (walk-rotate #f(-47.6 82.4 -82.4 -47.6 82.4 47.6 47.6 -82.4) (list 0 2 3 1) 1 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 )
 
 (defun walk-rotate-left ()
-    (walk-rotate #f(82.4 -47.6 47.6 82.4 -47.6 -82.4 -82.4 47.6) (list 0 2 3 1) 1 5) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
+    (walk-rotate #f(82.4 -47.6 47.6 82.4 -47.6 -82.4 -82.4 47.6) (list 0 2 3 1) 1 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 )
 
 ;; specified actions
