@@ -231,7 +231,7 @@
                 (send *ri* :wait-interpolation)
 
                 (case leg_index
-                    (0 (let ((step 1) (flag 0) (PFFR 9000))
+                    (0 (let ((step 1) (flag 0) (PFFR 9000) (PFRL 9000))
                         (while (< step 12)
                         (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -10))
                         (send *irtviewer* :draw-objects)
@@ -249,7 +249,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFFR* (+ PFFR *THR*))
+                            (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (- PFRL *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -265,7 +265,7 @@
                         (setf step (+ step 1)))
                         )
                     )
-                    (1 (let ((step 1) (flag 0) (PFFL 9000))
+                    (1 (let ((step 1) (flag 0) (PFFL 9000) (PFRR 9000))
                         (while (< step 12)
                         (send *excelsus* :front-left-leg :move-end-pos #f(0 0 -10))
                         (send *irtviewer* :draw-objects)
@@ -283,7 +283,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFFL* (+ PFFL *THR*))
+                            (if (and (> *MFFL* (+ PFFL *THR*)) (> *MFRR* (- PFRR *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -299,7 +299,7 @@
                         (setf step (+ step 1)))
                         )
                     )
-                    (2 (let ((step 1) (flag 0) (PFRR 9000))
+                    (2 (let ((step 1) (flag 0) (PFFL 9000) (PFRR 9000))
                         (while (< step 12)
                         (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -10))
                         (send *irtviewer* :draw-objects)
@@ -317,7 +317,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRR* (+ PFRR *THR*))
+                            (if (and (> *MFRR* (+ PFRR *THR*)) (> *MFFL* (+ PFFL *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -333,7 +333,7 @@
                         (setf step (+ step 1)))
                         )
                     )
-                    (3 (let ((step 1) (flag 0) (PFRL 9000))
+                    (3 (let ((step 1) (flag 0) (PFFR 9000) (PFRL 9000))
                         (while (< step 12)
                         (send *excelsus* :rear-left-leg :move-end-pos #f(0 0 -10))
                         (send *irtviewer* :draw-objects)
@@ -351,7 +351,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRL* (+ PFRL *THR*))
+                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (+ PFFR *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
