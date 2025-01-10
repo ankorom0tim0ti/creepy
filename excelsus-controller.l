@@ -252,7 +252,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (- PFRL *THR*)))
+                            (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (- *RFRL* *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -291,7 +291,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFFL* (+ PFFL *THR*)) (> *MFRR* (- PFRR *THR*)))
+                            (if (and (> *MFFL* (+ PFFL *THR*)) (> *MFRR* (- *RFRR* *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -330,7 +330,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFRR* (- PFRR *THR*)) (> *MFFL* (+ PFFL *THR*)))
+                            (if (and (> *MFRR* (- PFRR *THR*)) (> *MFFL* (+ *RFFL* *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -369,7 +369,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (- PFFR *THR*)))
+                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (- *RFFR* *THR*)))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
