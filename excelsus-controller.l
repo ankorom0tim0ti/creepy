@@ -250,7 +250,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFFR* (+ PFFR *THL*))
+                            (if (> *MFFR* (+ PFFR *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -284,7 +284,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFFL* (+ PFFL *THL*))
+                            (if (> *MFFL* (+ PFFL *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -318,7 +318,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRR* (+ PFRR *THL*))
+                            (if (> *MFRR* (+ PFRR *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -352,7 +352,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRL* (+ PFRL *THL*))
+                            (if (> *MFRL* (+ PFRL *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -765,7 +765,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFFL* (+ PFFL *THL*))
+                            (if (> *MFFL* (+ PFFL *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -799,7 +799,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRR* (+ PFRR *THL*))
+                            (if (> *MFRR* (+ PFRR *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
@@ -833,7 +833,7 @@
                         ;         (setf flag (+ flag 1))
                         ;     )
                         ; )
-                            (if (> *MFRL* (+ PFRL *THL*))
+                            (if (> *MFRL* (+ PFRL *THR*))
                                 (progn
                                     (setf flag (+ flag 1))
                                 )
