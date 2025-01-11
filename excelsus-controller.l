@@ -80,17 +80,22 @@
 (defun average (list)
     (let (average)
         (setf average 0.0)
-        (dolist (i list) (setf average (+ average i)))
-    (setf average (/ average (length list)))
-    average)
+        (dolist (i list) 
+            (setf average (+ average i))
+        );; dolist 0
+        (setf average (/ average (length list)))
+        average
+    );; let 0
 );; function
 
 ;; Function to multiple float vector with scalar value
 (defun scalar-multiply-float-vector (vec scalar)
-  (let ((result (make-array (length vec) :element-type 'float)))
-    (dotimes (i (length vec))
-      (setf (aref result i) (* (aref vec i) scalar)))
-    result)
+    (let ((result (make-array (length vec) :element-type 'float)))
+        (dotimes (i (length vec))
+            (setf (aref result i) (* (aref vec i) scalar))
+        );; dotimes 0
+        result
+    );; let 0
 );; function
 
 ;; Function for deactivate servo motor
@@ -105,22 +110,27 @@
 
 ;;　Assume standing on flat ground.
 (defun stand-up ()
+    ;; Turn on walk_flag
     (setf *walk_flag* t)
-    (ros::ros-info "STAND UP START")
+
     (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 ))
+    
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
     (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0))
+
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
-    ;; calibration
+    ;; Calibration Start
+
     (setf *RFFR* 0)
     (setf *RFFL* 0)
     (setf *RFRR* 0)
