@@ -11,7 +11,7 @@
 (setq *duaration* 2)
 (setq *walk_flag* nil)
 
-;; height of legs
+;; Height of legs
 (setq *HFR* -60)
 (setq *HFL* -60)
 (setq *HRR* -60)
@@ -19,28 +19,54 @@
 
 (setq *LU* 60)
 
-;; force of leg sensor
+;; Force of leg sensor
 (setq *FFR* '(0.0 0.0 0.0 0.0))
 (setq *FFL* '(0.0 0.0 0.0 0.0))
 (setq *FRR* '(0.0 0.0 0.0 0.0))
 (setq *FRL* '(0.0 0.0 0.0 0.0))
 
-;; reference force of leg sensor
+;; Reference force of leg sensor
 (setq *RFFR* 0)
 (setq *RFFL* 0)
 (setq *RFRR* 0)
 (setq *RFRL* 0)
 
-;; threshold of force
+;; Threshold of force
 (setq *THR* 24)
 
-;; average force of leg sensor
+;; Average force of leg sensor
 (setq *MFFR* 0.0)
 (setq *MFFL* 0.0)
 (setq *MFRR* 0.0)
 (setq *MFRL* 0.0)
 
-;; function to calculate average of float vector
+
+;; Name of ROS topic
+(defvar *cmd_topic* "/cmd_vel")
+
+(defvar *stomp_FR0* "/kjs/23/force/0")
+(defvar *stomp_FR1* "/kjs/23/force/1")
+(defvar *stomp_FR2* "/kjs/23/force/2")
+(defvar *stomp_FR3* "/kjs/23/force/3")
+
+(defvar *stomp_FL0* "/kjs/22/force/0")
+(defvar *stomp_FL1* "/kjs/22/force/1")
+(defvar *stomp_FL2* "/kjs/22/force/2")
+(defvar *stomp_FL3* "/kjs/22/force/3")
+
+(defvar *stomp_RR0* "/kjs/24/force/0")
+(defvar *stomp_RR1* "/kjs/24/force/1")
+(defvar *stomp_RR2* "/kjs/24/force/2")
+(defvar *stomp_RR3* "/kjs/24/force/3")
+
+(defvar *stomp_RL0* "/kjs/25/force/0")
+(defvar *stomp_RL1* "/kjs/25/force/1")
+(defvar *stomp_RL2* "/kjs/25/force/2")
+(defvar *stomp_RL3* "/kjs/25/force/3")
+
+;; Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Function to calculate average of float vector
 (defun average (list)
     (let (average)
         (setf average 0.0)
@@ -49,6 +75,7 @@
     average)
 )
 
+;; Function to multiple float vector with scalar value
 (defun scalar-multiply-float-vector (vec scalar)
   (let ((result (make-array (length vec) :element-type 'float)))
     (dotimes (i (length vec))
@@ -56,10 +83,12 @@
     result)
 )
 
+;; Function for deactivate servo motor
 (defun on ()
     (send *ri* :servo-on)
 )
 
+;; Function for activate servo motor
 (defun off ()
     (send *ri* :servo-off)
 )
@@ -765,6 +794,7 @@
     nil )
 )
 
+;; Function for elevate body
 (defun elevate (height)
     (setf *walk_flag* t)
     (let ((front-right-pos #f(-130.0 -130.0 0.0)) (front-left-pos #f(130.0 -130.0 0.0)) (rear-right-pos #f(-130.0 130.0 0.0)) (rear-left-pos #f(130.0 130.0 0.0)) (h-ave '(0.0 0.0 0.0 0.0)) offset)
@@ -815,7 +845,7 @@
     )
 )
 
-;; Walk toward specified direction
+;; Functions for walking toward specified direction
 (defun walk-right ()
     (walk #f(-1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0) (list 0 2 3 1) 32 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 )
@@ -837,7 +867,7 @@
     (walk-rotate #f(82.4 -47.6 47.6 82.4 -47.6 -82.4 -82.4 47.6) (list 0 2 3 1) 0.4 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 )
 
-;; specified actions
+;; Functions for specified actions
 (defun walk-right-until-key ()
     (do-until-key
         (walk-right)
@@ -869,29 +899,7 @@
     )
 )
 
-
-(defvar *cmd_topic* "/cmd_vel")
-
-(defvar *stomp_FR0* "/kjs/23/force/0")
-(defvar *stomp_FR1* "/kjs/23/force/1")
-(defvar *stomp_FR2* "/kjs/23/force/2")
-(defvar *stomp_FR3* "/kjs/23/force/3")
-
-(defvar *stomp_FL0* "/kjs/22/force/0")
-(defvar *stomp_FL1* "/kjs/22/force/1")
-(defvar *stomp_FL2* "/kjs/22/force/2")
-(defvar *stomp_FL3* "/kjs/22/force/3")
-
-(defvar *stomp_RR0* "/kjs/24/force/0")
-(defvar *stomp_RR1* "/kjs/24/force/1")
-(defvar *stomp_RR2* "/kjs/24/force/2")
-(defvar *stomp_RR3* "/kjs/24/force/3")
-
-(defvar *stomp_RL0* "/kjs/25/force/0")
-(defvar *stomp_RL1* "/kjs/25/force/1")
-(defvar *stomp_RL2* "/kjs/25/force/2")
-(defvar *stomp_RL3* "/kjs/25/force/3")
-
+;; Callback function for retrive command input
 (defun cmd_cb (msg)
     (if (not *walk_flag*)
         (progn
@@ -928,10 +936,9 @@
     )
 )
 
+;; Callback function for recording value of foot sensors
 
-;; callback function for recording value of foot sensors
-
-;; fr
+;; Front Right
 (defun stompfr0_cb (msg)
     (setf (elt *FFR* 0) (send msg :wrench :force :x))
 )
@@ -945,7 +952,7 @@
     (setf (elt *FFR* 3) (send msg :wrench :force :x))
 )
 
-;; fl
+;; Front Left
 (defun stompfl0_cb (msg)
     (setf (elt *FFL* 0) (send msg :wrench :force :x))
 )
@@ -959,7 +966,7 @@
     (setf (elt *FFL* 3) (send msg :wrench :force :x))
 )
 
-;; rr
+;; Rear Right
 (defun stomprr0_cb (msg)
     (setf (elt *FRR* 0) (send msg :wrench :force :x))
 )
@@ -973,7 +980,7 @@
     (setf (elt *FRR* 3) (send msg :wrench :force :x))
 )
 
-;; rl
+;; Rear Left
 (defun stomprl0_cb (msg)
     (setf (elt *FRL* 0) (send msg :wrench :force :x))
 )
@@ -988,40 +995,54 @@
 )
 
 
+;; main process ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(excelsus-init) ;; initialize excelsus simulation and robot interface
 
+;; initialize excelsus simulation and robot interface
+(excelsus-init)
 (ros::ros-info "Excelsus is now initialized")
-(send *ri* :servo-on) ;; activate servo motors
-(ros::duration-sleep 0.2) ;; This sleep is needed for reflect command to Excelsus
-(ros::ros-info "Actuator was activated ")
+
+;; activate servo motors
+(on)
+
+;; Wait for initialize servo moter
+(ros::duration-sleep 0.2)
+(ros::ros-info "Servo Motor was activated ")
+
+;; Initialize subscriber for cmd_vel
 (ros::subscribe *cmd_topic* geometry_msgs::Twist #'cmd_cb )
 
+;; Initialize subscriber for force sensor of front right leg
 (ros::subscribe *stomp_FR0* geometry_msgs::WrenchStamped #'stompfr0_cb )
 (ros::subscribe *stomp_FR1* geometry_msgs::WrenchStamped #'stompfr1_cb )
 (ros::subscribe *stomp_FR2* geometry_msgs::WrenchStamped #'stompfr2_cb )
 (ros::subscribe *stomp_FR3* geometry_msgs::WrenchStamped #'stompfr3_cb )
 
+;; Initialize subscriber for force sensor of front left leg
 (ros::subscribe *stomp_FL0* geometry_msgs::WrenchStamped #'stompfl0_cb )
 (ros::subscribe *stomp_FL1* geometry_msgs::WrenchStamped #'stompfl1_cb )
 (ros::subscribe *stomp_FL2* geometry_msgs::WrenchStamped #'stompfl2_cb )
 (ros::subscribe *stomp_FL3* geometry_msgs::WrenchStamped #'stompfl3_cb )
 
+;; Initialize subscriber for force sensor of rear right leg
 (ros::subscribe *stomp_RR0* geometry_msgs::WrenchStamped #'stomprr0_cb )
 (ros::subscribe *stomp_RR1* geometry_msgs::WrenchStamped #'stomprr1_cb )
 (ros::subscribe *stomp_RR2* geometry_msgs::WrenchStamped #'stomprr2_cb )
 (ros::subscribe *stomp_RR3* geometry_msgs::WrenchStamped #'stomprr3_cb )
 
+;; Initialize subscriber for force sensor of rear left leg
 (ros::subscribe *stomp_RL0* geometry_msgs::WrenchStamped #'stomprl0_cb )
 (ros::subscribe *stomp_RL1* geometry_msgs::WrenchStamped #'stomprl1_cb )
 (ros::subscribe *stomp_RL2* geometry_msgs::WrenchStamped #'stomprl2_cb )
 (ros::subscribe *stomp_RL3* geometry_msgs::WrenchStamped #'stomprl3_cb )
 
+;; Take initial position
 (stand-up)
-(ros::ros-info "reference force: ~A ~A ~A ~A" *RFFR* *RFFL* *RFRR* *RFRL*)
 (ros::ros-info "Excelsus take initial position")
+
+;; Main loo@
 (do-until-key
-    ; (ros::ros-info "reference force: ~A ~A ~A ~A" *RFFR* *RFFL* *RFRR* *RFRL*)
+    ;; read sensor value once
     (ros::spin-once)
     (ros::sleep)
 )
