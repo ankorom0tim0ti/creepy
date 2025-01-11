@@ -117,7 +117,6 @@
                                     45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 ))
-    
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
@@ -125,17 +124,18 @@
                                     45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0))
-
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
     ;; Calibration Start
 
+    ;; Initialize reference values as 0
     (setf *RFFR* 0)
     (setf *RFFL* 0)
     (setf *RFRR* 0)
     (setf *RFRL* 0)
 
+    ;; Retrive sensor value and integrate them
     (dotimes (i 100)
         (ros::spin-once)
         (setf *RFFR* (+ *RFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3))))
@@ -143,7 +143,7 @@
         (setf *RFRR* (+ *RFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3))))
         (setf *RFRL* (+ *RFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3))))
         (ros::sleep )
-    )
+    );; dotimes 0
     (setf *RFFR* (/ *RFFR* 100))
     (setf *RFFL* (/ *RFFL* 100))
     (setf *RFRR* (/ *RFRR* 100))
