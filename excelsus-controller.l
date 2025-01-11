@@ -1,14 +1,23 @@
-(load "excelsus.l") ;; load excelsus-interface lisp file
+;; Load excelsus-interface lisp file
+(load "excelsus.l") 
 
-(ros::roseus "excelsus-control") ;; initialize node for excelsus controller
+;; Initialize node for excelsus controller
+(ros::roseus "excelsus-control")
+(ros::ros-info "Intialized Node")
 
-(ros::rate 60) ;; set ros rate as 60 hz
+;; Set ros rate as 60 hz
+(ros::rate 60)
 
-(ros::roseus-add-msgs "geometry_msgs") ;; import message type geometry_msgs to use cmd_vel
-
+;; Import message type geometry_msgs to use cmd_vel
+(ros::roseus-add-msgs "geometry_msgs")
 (ros::ros-info "Needed files are loaded")
 
+;; Values and Parameters ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Set duration of motion
 (setq *duaration* 2)
+
+;; Flag for judge whether excelsus is walking or not
 (setq *walk_flag* nil)
 
 ;; Height of legs
@@ -17,6 +26,7 @@
 (setq *HRR* -60)
 (setq *HRL* -60)
 
+;; Height of raising leg
 (setq *LU* 60)
 
 ;; Force of leg sensor
@@ -31,14 +41,14 @@
 (setq *RFRR* 0)
 (setq *RFRL* 0)
 
-;; Threshold of force
-(setq *THR* 24)
-
 ;; Average force of leg sensor
 (setq *MFFR* 0.0)
 (setq *MFFL* 0.0)
 (setq *MFRR* 0.0)
 (setq *MFRL* 0.0)
+
+;; Threshold of force
+(setq *THR* 24)
 
 
 ;; Name of ROS topic
@@ -73,7 +83,7 @@
         (dolist (i list) (setf average (+ average i)))
     (setf average (/ average (length list)))
     average)
-)
+);; function
 
 ;; Function to multiple float vector with scalar value
 (defun scalar-multiply-float-vector (vec scalar)
@@ -81,17 +91,17 @@
     (dotimes (i (length vec))
       (setf (aref result i) (* (aref vec i) scalar)))
     result)
-)
+);; function
 
 ;; Function for deactivate servo motor
 (defun on ()
     (send *ri* :servo-on)
-)
+);; function
 
 ;; Function for activate servo motor
 (defun off ()
     (send *ri* :servo-off)
-)
+);; function
 
 ;;　Assume standing on flat ground.
 (defun stand-up ()
@@ -168,7 +178,7 @@
     (setf *HRL* -60)
 
     (ros::ros-info "STAND UP END ~A" *walk_flag*)
-)
+);; function
 
 ;; Function for walking
 (defun walk (mixing order move_leg move_center)
@@ -480,7 +490,7 @@
         (ros::ros-info "STEP END")
         (setf *walk_flag* nil)
     nil )
-)
+);; function
 
 ;; Function for walking rotation
 (defun walk-rotate (mixing order move_leg move_center)
@@ -792,7 +802,7 @@
         (ros::ros-info "STEP END")
         (setf *walk_flag* nil)
     nil )
-)
+);; function
 
 ;; Function for elevate body
 (defun elevate (height)
@@ -843,61 +853,64 @@
         (setf *HRL* (elt rear-left-pos 2))
         (setf *walk_flag* nil)
     )
-)
+);; function
 
 ;; Functions for walking toward specified direction
 (defun walk-right ()
     (walk #f(-1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0) (list 0 2 3 1) 32 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
+
 (defun walk-left ()
     (walk #f(1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0) (list 3 1 0 2) 32 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
+
 (defun walk-forward ()
     (walk #f(0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0) (list 1 0 2 3) 30 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
+
 (defun walk-backward ()
     (walk #f(0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0) (list 2 3 1 0) 30 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
 
 (defun walk-rotate-right ()
     (walk-rotate #f(-47.6 82.4 -82.4 -47.6 82.4 47.6 47.6 -82.4) (list 0 2 3 1) 0.4 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
 
 (defun walk-rotate-left ()
     (walk-rotate #f(82.4 -47.6 47.6 82.4 -47.6 -82.4 -82.4 47.6) (list 0 2 3 1) 0.4 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-)
+);; function
 
 ;; Functions for specified actions
 (defun walk-right-until-key ()
     (do-until-key
         (walk-right)
     )
-)
+);; function
 (defun walk-left-until-key ()
     (do-until-key
         (walk-left)
     )
-)
+);; function
 (defun walk-forward-until-key ()
     (do-until-key
         (walk-forward)
     )
-)
+);; function
 (defun walk-backward-until-key ()
     (do-until-key
         (walk-backward)
     )
-)
+);; function
 (defun walk-rotate-right-until-key ()
     (do-until-key
         (walk-rotate-right)
     )
-)
+);; function
 (defun walk-rotate-left-until-key ()
     (do-until-key
         (walk-rotate-left)
     )
-)
+);; function
 
 ;; Callback function for retrive command input
 (defun cmd_cb (msg)
@@ -934,65 +947,65 @@
             )
         )
     )
-)
+);; function
 
 ;; Callback function for recording value of foot sensors
 
 ;; Front Right
 (defun stompfr0_cb (msg)
     (setf (elt *FFR* 0) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfr1_cb (msg)
     (setf (elt *FFR* 1) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfr2_cb (msg)
     (setf (elt *FFR* 2) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfr3_cb (msg)
     (setf (elt *FFR* 3) (send msg :wrench :force :x))
-)
+);; function
 
 ;; Front Left
 (defun stompfl0_cb (msg)
     (setf (elt *FFL* 0) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfl1_cb (msg)
     (setf (elt *FFL* 1) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfl2_cb (msg)
     (setf (elt *FFL* 2) (send msg :wrench :force :x))
-)
+);; function
 (defun stompfl3_cb (msg)
     (setf (elt *FFL* 3) (send msg :wrench :force :x))
-)
+);; function
 
 ;; Rear Right
 (defun stomprr0_cb (msg)
     (setf (elt *FRR* 0) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprr1_cb (msg)
     (setf (elt *FRR* 1) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprr2_cb (msg)
     (setf (elt *FRR* 2) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprr3_cb (msg)
     (setf (elt *FRR* 3) (send msg :wrench :force :x))
-)
+);; function
 
 ;; Rear Left
 (defun stomprl0_cb (msg)
     (setf (elt *FRL* 0) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprl1_cb (msg)
     (setf (elt *FRL* 1) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprl2_cb (msg)
     (setf (elt *FRL* 2) (send msg :wrench :force :x))
-)
+);; function
 (defun stomprl3_cb (msg)
     (setf (elt *FRL* 3) (send msg :wrench :force :x))
-)
+);; function
 
 
 ;; main process ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
