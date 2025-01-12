@@ -1055,7 +1055,7 @@
             (rear-left-pos #f(0.0 0.0 -30.0))
 
             ;; Move length
-            (diff 40)
+            (diff 30)
         )
 
         ;; Turn on walk_flag
@@ -1148,7 +1148,7 @@
                                     45.0 0.0 90.0 -90.0 0.0 ))
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
-        
+
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
         (ros::ros-info "CRAW END")
