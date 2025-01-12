@@ -201,7 +201,7 @@
     (setf *walk_flag* t)   
     (ros::ros-info "WALK START")
 
-    ;; Return the height of the aircraft to the specified value
+    ;; Return the height of the body to the specified value
     (elevate 0)
 
     ;; Verify the input format
@@ -625,7 +625,7 @@
     (setf *walk_flag* t)   
     (ros::ros-info "WALK START")
 
-    ;; Return the height of the aircraft to the specified value
+    ;; Return the height of the body to the specified value
     (elevate 0)
 
     ;; Verify the input format
@@ -1045,8 +1045,20 @@
 
 ;; Function for elevate body
 (defun elevate (height)
+    ;; Turn of walk_flag
     (setf *walk_flag* t)
-    (let ((front-right-pos #f(-130.0 -130.0 0.0)) (front-left-pos #f(130.0 -130.0 0.0)) (rear-right-pos #f(-130.0 130.0 0.0)) (rear-left-pos #f(130.0 130.0 0.0)) (h-ave '(0.0 0.0 0.0 0.0)) offset)
+    (ros::ros-info "ELEVATE START")
+    (let 
+        (
+            (front-right-pos #f(-130.0 -130.0 0.0)) 
+            (front-left-pos #f(130.0 -130.0 0.0))
+            (rear-right-pos #f(-130.0 130.0 0.0))
+            (rear-left-pos #f(130.0 130.0 0.0))
+            (h-ave '(0.0 0.0 0.0 0.0))
+            offset
+        )
+
+        ;; Return the height of the body to the specified value
         (setf (elt h-ave 0) *HFR*)
         (setf (elt h-ave 1) *HFL*)
         (setf (elt h-ave 2) *HRR*)
@@ -1056,7 +1068,8 @@
         (setf (elt front-left-pos 2) (- *HFL* (- height offset)))
         (setf (elt rear-right-pos 2) (- *HRR* (- height offset)))
         (setf (elt rear-left-pos 2) (- *HRL* (- height offset)))
-        (ros::ros-info "ELEVATE START")
+
+        ;; Calculate inverse kinematics
         (send *excelsus* :fullbody-inverse-kinematics
             (list
                 (make-coords :pos front-right-pos)
@@ -1084,14 +1097,17 @@
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation)
-        (ros::ros-info "ELEVATE STOP")
+
         ;; Update height of legs
         (setf *HFR* (elt front-right-pos 2))
         (setf *HFL* (elt front-left-pos 2))
         (setf *HRR* (elt rear-right-pos 2))
         (setf *HRL* (elt rear-left-pos 2))
+
+        ;; Turn off walk_off
         (setf *walk_flag* nil)
-    )
+        (ros::ros-info "ELEVATE STOP")
+    );; let 0
 );; function
 
 ;; Functions for walking toward specified direction
