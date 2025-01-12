@@ -1049,10 +1049,13 @@
     (let 
         (
             ;; Target points of each legs
-            (front-right-pos #f(0.0 0.0 -60.0))
-            (front-left-pos #f(0.0 0.0 -60.0))
-            (rear-right-pos #f(0.0 0.0 -60.0))
-            (rear-left-pos #f(0.0 0.0 -60.0))
+            (front-right-pos #f(0.0 0.0 -20.0))
+            (front-left-pos #f(0.0 0.0 -20.0))
+            (rear-right-pos #f(0.0 0.0 -20.0))
+            (rear-left-pos #f(0.0 0.0 -20.0))
+
+            ;; Move length
+            (diff 40)
         )
 
         ;; Turn on walk_flag
@@ -1068,14 +1071,14 @@
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Intial Position
-        (setf (elt front-right-pos 0) -130.0)
-        (setf (elt front-right-pos 1) -130.0)
-        (setf (elt front-left-pos 0) 130.0)
-        (setf (elt front-left-pos 1) -130.0)
-        (setf (elt rear-right-pos 0) -130.0)
-        (setf (elt rear-right-pos 1) 130.0)
-        (setf (elt rear-left-pos 0) 130.0)
-        (setf (elt rear-left-pos 1) 130.0)
+        (setf (elt front-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt front-right-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt front-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt front-left-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt rear-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt rear-right-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt rear-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt rear-left-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
 
         ;; Calculate inverse kinematics
         (send *excelsus* :fullbody-inverse-kinematics
@@ -1105,19 +1108,19 @@
         )
 
         ;; Intial Position
-        (setf (elt front-right-pos 0) (+ -130.0 (elt direction 0)))
-        (setf (elt front-right-pos 1) (+ -130.0 (elt direction 1)))
-        (setf (elt front-left-pos 0) (+ 130.0 (elt direction 0)))
-        (setf (elt front-left-pos 1) (+ -130.0 (elt direction 1)))
-        (setf (elt rear-right-pos 0) (+ -130.0 (elt direction 0)))
-        (setf (elt rear-right-pos 1) (+ 130.0 (elt direction 1)))
-        (setf (elt rear-left-pos 0) (+ 130.0 (elt direction 0)))
-        (setf (elt rear-left-pos 1) (+ 130.0 (elt direction 1)))
+        (setf (elt front-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
+        (setf (elt front-right-pos 1) (+ -130.0 (* diff (elt direction 1))))
+        (setf (elt front-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
+        (setf (elt front-left-pos 1) (+ -130.0 (* diff (elt direction 1))))
+        (setf (elt rear-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
+        (setf (elt rear-right-pos 1) (+ 130.0 (* diff (elt direction 1))))
+        (setf (elt rear-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
+        (setf (elt rear-left-pos 1) (+ 130.0 (* diff (elt direction 1))))
 
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
         (ros::ros-info "CRAW END")
-    )
+    );; let 0
 )
 ;; Function for elevate body
 (defun elevate (height)
