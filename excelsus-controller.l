@@ -121,6 +121,7 @@
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
+    ;; pose 2
     (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0 
                                     45.0 0.0 30.0 -45.0 0.0 
@@ -145,11 +146,12 @@
         (setf *RFRL* (+ *RFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3))))
         (ros::sleep )
     );; dotimes 0
+
+    ;; Average the value
     (setf *RFFR* (/ *RFFR* 100))
     (setf *RFFL* (/ *RFFL* 100))
     (setf *RFRR* (/ *RFRR* 100))
     (setf *RFRL* (/ *RFRL* 100))
-
     (ros::ros-info "reference force: ~A ~A ~A ~A" *RFFR* *RFFL* *RFRR* *RFRL*)
 
 
