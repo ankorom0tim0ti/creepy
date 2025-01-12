@@ -1049,10 +1049,10 @@
     (let 
         (
             ;; Target points of each legs
-            (front-right-pos #f(0.0 0.0 -30.0))
-            (front-left-pos #f(0.0 0.0 -30.0))
-            (rear-right-pos #f(0.0 0.0 -30.0))
-            (rear-left-pos #f(0.0 0.0 -30.0))
+            (front-right-pos #f(0.0 0.0 -60.0))
+            (front-left-pos #f(0.0 0.0 -60.0))
+            (rear-right-pos #f(0.0 0.0 -60.0))
+            (rear-left-pos #f(0.0 0.0 -60.0))
 
             ;; Move length
             (diff 40)
