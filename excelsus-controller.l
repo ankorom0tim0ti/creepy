@@ -621,46 +621,74 @@
 
 ;; Function for walking rotation
 (defun walk-rotate (mixing order move_leg move_center)
+    ;; Turn on walk_flag
     (setf *walk_flag* t)   
-    (ros::ros-info "STEP START")
+    (ros::ros-info "WALK START")
+
+    ;; Return the height of the aircraft to the specified value
     (elevate 0)
+
+    ;; Verify the input format
     (unless (and (= (length mixing) 8) (= (length order) 4))
         (error "Length of inpute vector was mismatched"))
-    (let ((startpoint (copy-seq #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0))) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-        (centerpoint #f(0.0 0.0 0.0))
-        (endpoint (v+  #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0) (scalar-multiply-float-vector mixing move_leg)))
-        (front-right-pos #f(0.0 0.0 -60.0))
-        (front-left-pos #f(0.0 0.0 -60.0))
-        (rear-right-pos #f(0.0 0.0 -60.0))
-        (rear-left-pos #f(0.0 0.0 -60.0))
-        (front-right-dif #f(0.0 0.0 0.0))
-        (front-left-dif #f(0.0 0.0 0.0))
-        (rear-right-dif #f(0.0 0.0 0.0))
-        (rear-left-dif #f(0.0 0.0 0.0)))
+    
+    ;; Move legs
+    (let 
+        (
+            (startpoint (copy-seq #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0))) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
+            (centerpoint #f(0.0 0.0 0.0)) ;; center of mass position
+            (endpoint (v+  #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0) (scalar-multiply-float-vector mixing move_leg))) ;; Target points of legs
+            
+            ;; Target points of each legs
+            (front-right-pos #f(0.0 0.0 -60.0))
+            (front-left-pos #f(0.0 0.0 -60.0))
+            (rear-right-pos #f(0.0 0.0 -60.0))
+            (rear-left-pos #f(0.0 0.0 -60.0))
+
+            ;; Moving vectors of each legs
+            (front-right-dif #f(0.0 0.0 0.0))
+            (front-left-dif #f(0.0 0.0 0.0))
+            (rear-right-dif #f(0.0 0.0 0.0))
+            (rear-left-dif #f(0.0 0.0 0.0))
+        )
+
         ;; Move each leg
         (dotimes (i 4)
-            (let ((leg_index (elt order i)))
+            (let 
+                ((leg_index (elt order i)))
                 (setf (elt startpoint (* 2 leg_index)) (elt endpoint (* 2 leg_index))) ;; set x
                 (setf (elt startpoint (+ (* 2 leg_index) 1)) (elt endpoint (+ (* 2 leg_index) 1))) ;; set y
                 (case leg_index
-                    (0 (setf  centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos))) 
-                    (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (1 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (2 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (3 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 0.4 (* (- i 1) (- i 1) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (t (error "Why is this called?"))
-                ) ;; set center point and this would need to change --------------------------------------------------------------------
+                    (0 
+                        (setf  centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos))) 
+                        (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (1 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (2 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (3 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (t 
+                        (error "Why is this called?")
+                    )
+                );; case 0
+
+                ;; Assign the target position of the leg
                 (setf (elt front-right-pos 0) (elt startpoint 0))
                 (setf (elt front-right-pos 1) (elt startpoint 1))
                 (setf (elt front-left-pos 0) (elt startpoint 2))
@@ -669,7 +697,10 @@
                 (setf (elt rear-right-pos 1) (elt startpoint 5))
                 (setf (elt rear-left-pos 0) (elt startpoint 6))
                 (setf (elt rear-left-pos 1) (elt startpoint 7))
-                ; (format t "~%MoveLeg: ~a" centerpoint)
+
+                ;; Lift up leg to move
+
+                ;; Calculate inverse kinematics
                 (send *excelsus* :fullbody-inverse-kinematics
                     (list
                         (make-coords :pos front-right-pos)
@@ -692,187 +723,269 @@
                         (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
                     )
                     :target-centroid-pos centerpoint
-                    :cog-translation-axis :nil
+                    :cog-translation-axis nil
                     :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
                 )
 
                 (case leg_index
-                    (0 (setf (elt front-right-dif 2) *LU*) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HFR* (- *LU* 60)))
-                    (1 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) *LU*) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HFL* (- *LU* 60)))
-                    (2 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) *LU*) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HRR* (- *LU* 60)))
-                    (3 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) *LU*) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HRL* (- *LU* 60)))
-                    (t (error "Why is this called?"))
-                )
+                    (0 
+                        (setf (elt front-right-dif 2) *LU*)
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HFR* (- *LU* 60))
+                    )
+                    (1 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) *LU*)
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HFL* (- *LU* 60))
+                    )
+                    (2 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) *LU*)
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HRR* (- *LU* 60))
+                    )
+                    (3 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) *LU*)
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HRL* (- *LU* 60))
+                    )
+                    (t 
+                        (error "Why is this called?")
+                    )
+                );; case 0
 
                 
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
 
                 (case leg_index
-                    (0 (let ((step 1) (flag 0) (PFFR 0) (PFRL 0))
-                        (ros::spin-once)
-                        (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                        (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                        (while (< step 16)
-                        (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -5))
-                        
-                        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-                        (send *ri* :wait-interpolation)
-                        ( dotimes ( i 10)
+                    (0 
+                        (let 
+                            ((step 1) (flag 0) (PFFR 0) (PFRL 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
-                            (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                            (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                            (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                            (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                            ; (ros::ros-info "reference pressure of legs in sub roop front right: ~A ~A" *RFFR* *RFRL*)
-                        ;     (if (and (> *MFFR* (+ *RFFR* *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
-                        ;         (progn ;(setf step (+ step 100))
-                        ;         (setf flag (+ flag 1))
-                        ;     )
-                        ; )
-                            (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
-                                (progn
-                                    (setf flag (+ flag 1))
-                                )
-                                (progn (setf PFFR *MFFR*)
-                                    ; (setf PFRL *MFRL*)
-                                )
-                            )
-                        )
-                        (ros::ros-info "pressure of legs in sub roop front right: ~A ~A ~A ~A" *MFFR* PFFR *MFRL* *RFRL*)
-                        (if (> flag 6)
-                            (progn (setf step (+ step 100))
-                            (ros::ros-info "front right stomped ~A" step)))
-                        ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
-                        (setf *HFR* (- *HFR* 5))
-                        (setf step (+ step 1)))
-                        )
+                            (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                            (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                            ;; stomp down leg
+                            (while (< step 16)
+                                ;; swing leg 
+                                (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -5))
+                                (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+                                (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
+                                ( dotimes ( i 10)
+                                    ;; Read sensor value
+                                    (ros::spin-once)
+                                    (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                                    (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                                    (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+                                    (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
+                                    (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
+                                        (progn
+                                            (setf flag (+ flag 1))
+                                        );; progn
+                                        (progn 
+                                            (setf PFFR *MFFR*)
+                                        );; progn
+                                    );; if 0
+                                );; dotimes 1
+                                (ros::ros-info "pressure of legs in sub roop front right: ~A ~A ~A ~A" *MFFR* PFFR *MFRL* *RFRL*)
+                                
+                                ;; Finalize the decision
+                                (if (> flag 6)
+                                    (progn 
+                                        (setf step (+ step 100))
+                                        (ros::ros-info "front right stomped ~A" step)
+                                    );; progn 0
+                                );; if 0
+                                (setf *HFR* (- *HFR* 5))
+                                (setf step (+ step 1))
+                            );; while 0
+                        );; let 2
                     )
-                    (1 (let ((step 1) (flag 0) (PFFL 0) (PFRR 0))
-                        (ros::spin-once)
-                        (setf PFFL (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                        (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                        (while (< step 16)
-                        (send *excelsus* :front-left-leg :move-end-pos #f(0 0 -5))
-                        
-                        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-                        (send *ri* :wait-interpolation)
-                        ( dotimes ( i 10)
+                    (1 
+                        (let 
+                            ((step 1) (flag 0) (PFFL 0) (PFRR 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
-                            (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                            (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                            (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                            (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                            ; (ros::ros-info "reference pressure of legs in sub roop front left: ~A ~A" *RFFL* *RFRR*)
-                        ;     (if (and (> *MFFL* (+ *RFFL* *THR*)) (> *MFRR* (+ *RFRR* *THR*)))
-                        ;         (progn ;(setf step (+ step 100))
-                        ;         (setf flag (+ flag 1))
-                        ;     )
-                        ; )
-                            (if (and (> *MFFL* (+ PFFL *THR*)) (> *MFRR* (+ *RFRR* *THR*)))
-                                (progn
-                                    (setf flag (+ flag 1))
-                                )
-                                (progn (setf PFFL *MFFL*)
-                                    ; (setf PFRR *MFRR*)
-                                )
-                            )
-                        )
-                        (ros::ros-info "pressure of legs in sub roop front left: ~A ~A ~A ~A" *MFFL* PFFL *MFRR* *RFRR*)
-                        (if (> flag 6)
-                            (progn (setf step (+ step 100))
-                            (ros::ros-info "front left stomped ~A" step)))
-                        ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
-                        (setf *HFL* (- *HFL* 5))
-                        (setf step (+ step 1)))
-                        )
+                            (setf PFFL (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                            (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+
+                            ;; stomp down leg
+                            (while (< step 16)
+                                ;; swing leg
+                                (send *excelsus* :front-left-leg :move-end-pos #f(0 0 -5))
+                                (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+                                (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
+                                ( dotimes ( i 10)
+                                    ;; Read sensor value
+                                    (ros::spin-once)
+                                    (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                                    (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                                    (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+                                    (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
+                                    (if (and (> *MFFL* (+ PFFL *THR*)) (> *MFRR* (+ *RFRR* *THR*)))
+                                        (progn
+                                            (setf flag (+ flag 1))
+                                        );; progn 0
+                                        (progn 
+                                            (setf PFFL *MFFL*)
+                                        );; progn 0
+                                    );; if 0
+                                );; dotimes 1
+                                (ros::ros-info "pressure of legs in sub roop front left: ~A ~A ~A ~A" *MFFL* PFFL *MFRR* *RFRR*)
+                                
+                                ;; Finalize the decision
+                                (if (> flag 6)
+                                    (progn 
+                                        (setf step (+ step 100))
+                                        (ros::ros-info "front left stomped ~A" step)
+                                    );; progn 0
+                                );; if 0
+                                (setf *HFL* (- *HFL* 5))
+                                (setf step (+ step 1))
+                            );; while 0
+                        );; let 2
                     )
-                    (2 (let ((step 1) (flag 0) (PFFL 0) (PFRR 0))
-                        (ros::spin-once)
-                        (setf PFFL (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                        (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                        (while (< step 16)
-                        (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -5))
-                        
-                        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-                        (send *ri* :wait-interpolation)
-                        ( dotimes ( i 10)
+                    (2 
+                        (let ((step 1) (flag 0) (PFFL 0) (PFRR 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
-                            (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                            (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                            (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                            (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                            ; (ros::ros-info "reference pressure of legs in sub roop rear right: ~A ~A" *RFFL* *RFRR*)
-                        ;     (if (and (> *MFFL* (+ *RFFL* *THR*)) (> *MFRR* (+ *RFRR* *THR*)))
-                        ;         (progn ;(setf step (+ step 100))
-                        ;         (setf flag (+ flag 1))
-                        ;     )
-                        ; )
-                            (if (and (> *MFRR* (+ *RFRR* *THR*)) (> *MFFL* (+ PFFL *THR*)))
-                                (progn
-                                    (setf flag (+ flag 1))
-                                )
-                                (progn (setf PFRR *MFRR*)
-                                    ; (setf PFFL *MFFL*)
-                                )
-                            )
-                        )
-                        (ros::ros-info "pressure of legs in sub roop rear right: ~A ~A ~A ~A" *MFRR* PFRR *MFFL* *RFFL*)
-                        (if (> flag 6)
-                            (progn (setf step (+ step 100))
-                            (ros::ros-info "rear right stomped ~A" step)))
-                        ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
-                        (setf *HRR* (- *HRR* 5))
-                        (setf step (+ step 1)))
-                        )
+                            (setf PFFL (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                            (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+
+                            ;; Stomp down leg
+                            (while (< step 16)
+                                ;; Swing down leg
+                                (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -5))
+                                (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+                                (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
+                                ( dotimes ( i 10)
+                                    ;; Read sensor value
+                                    (ros::spin-once)
+                                    (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                                    (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                                    (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+                                    (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
+                                    (if (and (> *MFRR* (+ *RFRR* *THR*)) (> *MFFL* (+ PFFL *THR*)))
+                                        (progn
+                                            (setf flag (+ flag 1))
+                                        );; progn 0
+                                        (progn 
+                                            (setf PFRR *MFRR*)
+                                        );; progn 0
+                                    );; if 0
+                                );; dotimes 1
+                                (ros::ros-info "pressure of legs in sub roop rear right: ~A ~A ~A ~A" *MFRR* PFRR *MFFL* *RFFL*)
+
+                                ;; Finalize the decision
+                                (if (> flag 6)
+                                    (progn
+                                        (setf step (+ step 100))
+                                        (ros::ros-info "rear right stomped ~A" step)
+                                    );; progn 0
+                                );; if 0
+                                (setf *HRR* (- *HRR* 5))
+                                (setf step (+ step 1))
+                            );; while 0
+                        );; let 2
                     )
-                    (3 (let ((step 1) (flag 0) (PFFR 0) (PFRL 0))
-                        (ros::spin-once)
-                        (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                        (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                        (while (< step 16)
-                        (send *excelsus* :rear-left-leg :move-end-pos #f(0 0 -5))
-                        
-                        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-                        (send *ri* :wait-interpolation)
-                        ( dotimes ( i 10)
+                    (3 
+                        (let 
+                            ((step 1) (flag 0) (PFFR 0) (PFRL 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
-                            (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                            (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                            (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                            (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                            ; (ros::ros-info "reference pressure of legs in sub roop rear left: ~A ~A" *RFFR* *RFRL*)
-                        ;     (if (and (> *MFFR* (+ *RFFR* *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
-                        ;         (progn ;(setf step (+ step 100))
-                        ;         (setf flag (+ flag 1))
-                        ;     )
-                        ; )
-                            (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (+ *RFFR* *THR*)))
-                                (progn
-                                    (setf flag (+ flag 1))
-                                )
-                                (progn (setf PFRL *MFRL*)
-                                    ; (setf PFFR *MFFR*)
-                                )
-                            )
-                        )
-                        (ros::ros-info "pressure of legs in sub roop rear left: ~A ~A ~A ~A" *MFRL* PFRL *MFFR* *RFFR*)
-                        (if (> flag 6)
-                            (progn (setf step (+ step 100))
-                            (ros::ros-info "rear left stomped ~A" step)))
-                        ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
-                        (setf *HRL* (- *HRL* 5))
-                        (setf step (+ step 1)))
-                        )
+                            (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                            (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                            ;; Stomp down leg
+                            (while (< step 16)
+                                ;; Swing down leg
+                                (send *excelsus* :rear-left-leg :move-end-pos #f(0 0 -5))
+                                (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+                                (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
+                                ( dotimes ( i 10)
+                                    ;; Read sensor value
+                                    (ros::spin-once)
+                                    (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                                    (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                                    (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+                                    (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
+                                    (if (and (> *MFRL* (+ PFRL *THR*)) (> *MFFR* (+ *RFFR* *THR*)))
+                                        (progn
+                                            (setf flag (+ flag 1))
+                                        );; progn 0
+                                        (progn 
+                                            (setf PFRL *MFRL*)
+                                        );; progn 0
+                                    );; if 0
+                                );; dotimes 1
+                                (ros::ros-info "pressure of legs in sub roop rear left: ~A ~A ~A ~A" *MFRL* PFRL *MFFR* *RFFR*)
+
+                                ;; Finalize the decision
+                                (if (> flag 6)
+                                    (progn 
+                                        (setf step (+ step 100))
+                                        (ros::ros-info "rear left stomped ~A" step)
+                                    );; progn 0
+                                );; if 0
+                                (setf *HRL* (- *HRL* 5))
+                                (setf step (+ step 1))
+                            );; while 0
+                        );; let 2
                     )
                     (t (error "Why is this called?"))
                 )
                 
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
-            )
-        )
+            );; let 1
+        );; dotimes 0
 
+        ;; Specify target position of legs at the initial position
         (setf (elt front-right-pos 0) -130)
         (setf (elt front-right-pos 1) 130)
         (setf (elt front-right-pos 2) -60)
@@ -886,7 +999,7 @@
         (setf (elt rear-left-pos 1) -130)
         (setf (elt rear-left-pos 2) -60)
 
-        ;; Reset pose
+        ;; Calculate inverse kinematics
         (send *excelsus* :fullbody-inverse-kinematics
             (list
                 (make-coords :pos front-right-pos)
@@ -908,13 +1021,12 @@
                 (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
                 (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
             )
-            ; :translation-axis (list t t t t)
-            ; :rotation-axis (list t t t t)
             :target-centroid-pos #f(0 0 0)
             :cog-translation-axis t
             :root-link-virtual-joint-weight #f(1.0 1.0 1.0 0 0 0)
-            
         )
+
+        ;; Modify height of legs according to *HFR*, *HFL*, *HRR* and *HRL*
         (setf (elt front-right-dif 2) (- *HFR* -60))
         (setf (elt front-left-dif 2) (- *HFL* -60))
         (setf (elt rear-right-dif 2) (- *HRR* -60))
@@ -923,12 +1035,12 @@
         (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
         (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
         (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
-        ; (send *excelsus* :angle-vector #f(46.9764 2.40906 16.1589 -13.7483 46.9762 47.6174 2.62926 16.2842 -13.6534 47.6172 47.8289 3.1044 16.7837 -13.6777 47.8287 47.1906 2.88624 16.6589 -13.7711 -47.1904)) ;; angle-vector of stand up state
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation)
+
         (ros::ros-info "STEP END")
         (setf *walk_flag* nil)
-    nil )
+    nil );; let 0
 );; function
 
 ;; Function for elevate body
