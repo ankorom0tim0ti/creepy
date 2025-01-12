@@ -112,6 +112,7 @@
 (defun stand-up ()
     ;; Turn on walk_flag
     (setf *walk_flag* t)
+    (ros::ros-info "STAND UP START")
 
     ;; pose 1
     (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
@@ -154,8 +155,7 @@
     (setf *RFRL* (/ *RFRL* 100))
     (ros::ros-info "reference force: ~A ~A ~A ~A" *RFFR* *RFFL* *RFRR* *RFRL*)
 
-
-
+    ;; Take initial position
     (setq *targetposRR* #f(-130 130 -60)) ;; RearRight
     (setq *targetposRL* #f(130 130 -60)) ;; RearLeft
     (setq *targetposFR* #f(-130 -130 -60)) ;; FrontRight
@@ -182,7 +182,6 @@
     )
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
-    (setf *walk_flag* nil)
 
     ;; Initialize height of legs
     (setf *HFR* -60)
@@ -190,7 +189,8 @@
     (setf *HRR* -60)
     (setf *HRL* -60)
 
-    (ros::ros-info "STAND UP END ~A" *walk_flag*)
+    (setf *walk_flag* nil)
+    (ros::ros-info "STAND UP END")
 );; function
 
 ;; Function for walking
