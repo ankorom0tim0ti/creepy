@@ -264,7 +264,7 @@
                     )
                 );; case 0
 
-                ;; ssign the target position of the leg
+                ;; Assign the target position of the leg
                 (setf (elt front-right-pos 0) (elt startpoint 0))
                 (setf (elt front-right-pos 1) (elt startpoint 1))
                 (setf (elt front-left-pos 0) (elt startpoint 2))
@@ -274,6 +274,9 @@
                 (setf (elt rear-left-pos 0) (elt startpoint 6))
                 (setf (elt rear-left-pos 1) (elt startpoint 7))
 
+                ;; Lift up leg to move
+
+                ;; Calculate inverse kinematics
                 (send *excelsus* :fullbody-inverse-kinematics
                     (list
                         (make-coords :pos front-right-pos)
@@ -301,55 +304,108 @@
                 )
 
                 (case leg_index
-                    (0 (setf (elt front-right-dif 2) *LU*) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HFR* (- *LU* 60)))
-                    (1 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) *LU*) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HFL* (- *LU* 60)))
-                    (2 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) *LU*) (setf (elt rear-left-dif 2) (- *HRR* -60)) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HRR* (- *LU* 60)))
-                    (3 (setf (elt front-right-dif 2) (- *HFR* -60)) (setf (elt front-left-dif 2) (- *HFL* -60)) (setf (elt rear-right-dif 2) (- *HRR* -60)) (setf (elt rear-left-dif 2) *LU*) (send *excelsus* :front-right-leg :move-end-pos front-right-dif) (send *excelsus* :front-left-leg :move-end-pos front-left-dif) (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif) (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif) (setf *HRL* (- *LU* 60)))
-                    (t (error "Why is this called?"))
-                )
+                    (0 
+                        (setf (elt front-right-dif 2) *LU*)
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HFR* (- *LU* 60))
+                    )
+                    (1 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) *LU*)
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HFL* (- *LU* 60))
+                    )
+                    (2 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) *LU*)
+                        (setf (elt rear-left-dif 2) (- *HRR* -60))
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HRR* (- *LU* 60))
+                    )
+                    (3 
+                        (setf (elt front-right-dif 2) (- *HFR* -60))
+                        (setf (elt front-left-dif 2) (- *HFL* -60))
+                        (setf (elt rear-right-dif 2) (- *HRR* -60))
+                        (setf (elt rear-left-dif 2) *LU*)
+                        (send *excelsus* :front-right-leg :move-end-pos front-right-dif)
+                        (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
+                        (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
+                        (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
+                        (setf *HRL* (- *LU* 60))
+                    )
+                    (t 
+                        (error "Why is this called?")
+                    )
+                );; case 0
 
-                ;; (send *irtviewer* :draw-objects)
+                
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
 
                 (case leg_index
-                    (0 (let ((step 1) (flag 0) (PFFR 0) (PFRL 0))
-                        (ros::spin-once)
-                        (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                        (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                        (while (< step 16)
-                        (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
-                        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-                        (send *ri* :wait-interpolation)
-                        ( dotimes ( i 10)
+                    (0 
+                        (let 
+                            ((step 1) (flag 0) (PFFR 0) (PFRL 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
-                            (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
-                            (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
-                            (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
-                            (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
-                            ; (ros::ros-info "reference pressure of legs in sub roop front right: ~A ~A" *RFFR* *RFRL*)
-                        ;     (if (and (> *MFFR* (+ *RFFR* *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
-                        ;         (progn ;(setf step (+ step 100))
-                        ;         (setf flag (+ flag 1))
-                        ;     )
-                        ; )
-                            (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
-                                (progn
-                                    (setf flag (+ flag 1))
-                                )
-                                (progn (setf PFFR *MFFR*)
-                                    ; (setf PFRL *MFRL*)
-                                )
+                            (setf PFFR (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                            (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                            ;; stomp down leg
+                            (while (< step 16)
+                                ;; swing leg 
+                                (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -5))
+                                (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+                                (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
+                                ( dotimes ( i 10)
+                                    ;; Read sensor value
+                                    (ros::spin-once)
+                                    (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
+                                    (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
+                                    (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+                                    (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
+                                    (if (and (> *MFFR* (+ PFFR *THR*)) (> *MFRL* (+ *RFRL* *THR*)))
+                                        (progn
+                                            (setf flag (+ flag 1))
+                                        );; progn
+                                        (progn 
+                                            (setf PFFR *MFFR*)
+                                        );; progn
+                                    );; if 0
+                                );; dotimes 1
+                                (ros::ros-info "pressure of legs in sub roop front right: ~A ~A ~A ~A" *MFFR* PFFR *MFRL* *RFRL*)
+                                
+                                ;; 
+                                (if (> flag 6)
+                                    (progn 
+                                        (setf step (+ step 100))
+                                        (ros::ros-info "front right stomped ~A" step)
+                                    );; progn 0
+                                );; if 0
+                                ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
+                                (setf *HFR* (- *HFR* 5))
+                                (setf step (+ step 1))
                             )
-                        )
-                        (ros::ros-info "pressure of legs in sub roop front right: ~A ~A ~A ~A" *MFFR* PFFR *MFRL* *RFRL*)
-                        (if (> flag 6)
-                            (progn (setf step (+ step 100))
-                            (ros::ros-info "front right stomped ~A" step)))
-                        ; (ros::ros-info "height of legs in sub roop: ~A ~A ~A ~A" *HFR* *HFL* *HRR* *HRL*)
-                        (setf *HFR* (- *HFR* 5))
-                        (setf step (+ step 1)))
                         )
                     )
                     (1 (let ((step 1) (flag 0) (PFFL 0) (PFRR 0))
@@ -358,7 +414,7 @@
                         (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
                         (while (< step 16)
                         (send *excelsus* :front-left-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -397,7 +453,7 @@
                         (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
                         (while (< step 16)
                         (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -436,7 +492,7 @@
                         (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
                         (while (< step 16)
                         (send *excelsus* :rear-left-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -471,7 +527,7 @@
                     )
                     (t (error "Why is this called?"))
                 )
-                ;; (send *irtviewer* :draw-objects)
+                
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
             );; let 1
@@ -620,7 +676,7 @@
                     (t (error "Why is this called?"))
                 )
 
-                ;; (send *irtviewer* :draw-objects)
+                
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
 
@@ -631,7 +687,7 @@
                         (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
                         (while (< step 16)
                         (send *excelsus* :front-right-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -670,7 +726,7 @@
                         (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
                         (while (< step 16)
                         (send *excelsus* :front-left-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -709,7 +765,7 @@
                         (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
                         (while (< step 16)
                         (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -748,7 +804,7 @@
                         (setf PFRL (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
                         (while (< step 16)
                         (send *excelsus* :rear-left-leg :move-end-pos #f(0 0 -5))
-                        ;; (send *irtviewer* :draw-objects)
+                        
                         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                         (send *ri* :wait-interpolation)
                         ( dotimes ( i 10)
@@ -783,7 +839,7 @@
                     )
                     (t (error "Why is this called?"))
                 )
-                ;; (send *irtviewer* :draw-objects)
+                
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
             )
