@@ -458,36 +458,47 @@
                     )
                     (2 
                         (let ((step 1) (flag 0) (PFFL 0) (PFRR 0))
+
+                            ;; Read sensor value once and calculate reference value
                             (ros::spin-once)
                             (setf PFFL (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
                             (setf PFRR (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
+
+                            ;; Stomp down leg
                             (while (< step 16)
+                                ;; Swing down leg
                                 (send *excelsus* :rear-right-leg :move-end-pos #f(0 0 -5))
-                                
                                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                                 (send *ri* :wait-interpolation)
+
+                                ;; Judge whether leg is stomping or not for ten times
                                 ( dotimes ( i 10)
+                                    ;; Read sensor value
                                     (ros::spin-once)
                                     (setf *MFFR* (max (elt *FFR* 0) (elt *FFR* 1) (elt *FFR* 2) (elt *FFR* 3)))
                                     (setf *MFFL* (max (elt *FFL* 0) (elt *FFL* 1) (elt *FFL* 2) (elt *FFL* 3)))
                                     (setf *MFRR* (max (elt *FRR* 0) (elt *FRR* 1) (elt *FRR* 2) (elt *FRR* 3)))
                                     (setf *MFRL* (max (elt *FRL* 0) (elt *FRL* 1) (elt *FRL* 2) (elt *FRL* 3)))
+
+                                    ;; Judge
                                     (if (and (> *MFRR* (+ *RFRR* *THR*)) (> *MFFL* (+ PFFL *THR*)))
                                         (progn
                                             (setf flag (+ flag 1))
-                                        )
-                                        (progn (setf PFRR *MFRR*)
-                                            ; (setf PFFL *MFFL*)
-                                        )
-                                    )
-                                )
+                                        );; progn 0
+                                        (progn 
+                                            (setf PFRR *MFRR*)
+                                        );; progn 0
+                                    );; if 0
+                                );; dotimes 1
                                 (ros::ros-info "pressure of legs in sub roop rear right: ~A ~A ~A ~A" *MFRR* PFRR *MFFL* *RFFL*)
+
+                                ;; Finalize the decision
                                 (if (> flag 6)
                                     (progn
                                         (setf step (+ step 100))
                                         (ros::ros-info "rear right stomped ~A" step)
-                                    )
-                                )
+                                    );; progn 0
+                                );; if 0
                                 (setf *HRR* (- *HRR* 5))
                                 (setf step (+ step 1))
                             );; while 0
