@@ -1315,4 +1315,4 @@
     ;; read sensor value once
     (ros::spin-once)
     (ros::sleep)
-)
+);; do-until-key 0
