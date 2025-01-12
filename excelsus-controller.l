@@ -20,6 +20,9 @@
 ;; Flag for judge whether excelsus is walking or not
 (setq *walk_flag* nil)
 
+;; Flag for judge rocomotion mode (walk / craw)
+(setq *WC_flag* nil)
+
 ;; Height of legs
 (setq *HFR* -60)
 (setq *HFL* -60)
@@ -109,7 +112,7 @@
     (send *ri* :servo-off)
 );; function
 
-;;　Assume standing on flat ground.
+;;　Function to stand up. Assume standing on flat ground.
 (defun stand-up ()
     ;; Turn on walk_flag
     (setf *walk_flag* t)
@@ -195,6 +198,34 @@
     ;; Turn off walk_flag
     (setf *walk_flag* nil)
     (ros::ros-info "STAND UP END")
+);; function
+
+;; Function to sit down
+(defun sit-down ()
+    ;; Turn on walk_flag
+    (setf *walk_flag* t)
+    (ros::ros-info "SIT DOWN START")
+
+    ;; pose 1
+    (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 ))
+    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+    (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
+    ;; Turn on walk_flag
+    (setf *walk_flag* nil)
+    (ros::ros-info "SIT DOWN END")
+);; function
+
+(defun switch-rocomotion ()
+    (if (*WC_flag*)
+        (progn
+        );; progn 0
+        (progn
+        );; progn 0
+    );; if 0
 );; function
 
 ;; Function for walking
@@ -1100,8 +1131,6 @@
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
-        (ros::ros-info "CRAW START2")
-
         ;; Later Position
         (setf (elt front-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
         (setf (elt front-right-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
@@ -1139,8 +1168,6 @@
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
-
-        (ros::ros-info "CRAW START3")
 
         (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
