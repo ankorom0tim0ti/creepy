@@ -123,14 +123,6 @@
     (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
     (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
-    ;; pose 2
-    (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
-                                    45.0 0.0 30.0 -45.0 0.0 
-                                    45.0 0.0 30.0 -45.0 0.0 
-                                    45.0 0.0 30.0 -45.0 0.0))
-    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-    (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
-
     ;; Calibration Start
 
     ;; Initialize reference values as 0
@@ -155,6 +147,16 @@
     (setf *RFRR* (/ *RFRR* 100))
     (setf *RFRL* (/ *RFRL* 100))
     (ros::ros-info "reference force: ~A ~A ~A ~A" *RFFR* *RFFL* *RFRR* *RFRL*)
+
+    ;; Caliburation End
+
+    ;; pose 2
+    (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
+                                    45.0 0.0 30.0 -45.0 0.0 
+                                    45.0 0.0 30.0 -45.0 0.0 
+                                    45.0 0.0 30.0 -45.0 0.0))
+    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+    (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
     ;; Take initial position
     (setq *targetposRR* #f(-130 130 -60)) ;; RearRight
@@ -1043,6 +1045,50 @@
     nil );; let 0
 );; function
 
+(defun craw (direction)
+    ;; Turn on walk_flag
+    (setf *walk_flag* t)
+    (ros::ros-info "CRAW START")
+
+    ;; pose 1
+    (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 ))
+    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+    (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
+    ;; 
+    (send *excelsus* :fullbody-inverse-kinematics
+        (list
+            (make-coords :pos front-right-pos)
+            (make-coords :pos front-left-pos)
+            (make-coords :pos rear-right-pos)
+            (make-coords :pos rear-left-pos)
+        )
+        :move-target
+        (list
+            (send *excelsus* :front-right-leg :end-coords)
+            (send *excelsus* :front-left-leg :end-coords)
+            (send *excelsus* :rear-right-leg :end-coords)
+            (send *excelsus* :rear-left-leg :end-coords)
+        )
+        :link-list
+        (list
+            (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
+            (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
+            (send *excelsus* :link-list (send *excelsus* :rear-right-leg :end-coords :parent))
+            (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
+        )
+        :target-centroid-pos centerpoint
+        :cog-translation-axis :z
+        :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
+    )
+
+    ;; Turn off walk_flag
+    (setf *walk_flag* nil)
+    (ros::ros-info "CRAW END")
+)
 ;; Function for elevate body
 (defun elevate (height)
     ;; Turn of walk_flag
