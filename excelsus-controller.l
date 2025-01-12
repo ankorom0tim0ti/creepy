@@ -1049,10 +1049,10 @@
     (let 
         (
             ;; Target points of each legs
-            (front-right-pos #f(0.0 0.0 -60.0))
-            (front-left-pos #f(0.0 0.0 -60.0))
-            (rear-right-pos #f(0.0 0.0 -60.0))
-            (rear-left-pos #f(0.0 0.0 -60.0))
+            (front-right-pos #f(0.0 0.0 -30.0))
+            (front-left-pos #f(0.0 0.0 -30.0))
+            (rear-right-pos #f(0.0 0.0 -30.0))
+            (rear-left-pos #f(0.0 0.0 -30.0))
 
             ;; Move length
             (diff 40)
@@ -1081,30 +1081,21 @@
         (setf (elt rear-left-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
 
         ;; Calculate inverse kinematics
-        (send *excelsus* :fullbody-inverse-kinematics
-            (list
-                (make-coords :pos front-right-pos)
-                (make-coords :pos front-left-pos)
-                (make-coords :pos rear-right-pos)
-                (make-coords :pos rear-left-pos)
-            )
-            :move-target
-            (list
-                (send *excelsus* :front-right-leg :end-coords)
-                (send *excelsus* :front-left-leg :end-coords)
-                (send *excelsus* :rear-right-leg :end-coords)
-                (send *excelsus* :rear-left-leg :end-coords)
-            )
-            :link-list
-            (list
-                (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
-                (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
-                (send *excelsus* :link-list (send *excelsus* :rear-right-leg :end-coords :parent))
-                (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
-            )
-            :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis nil
-            ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
+        (send *excelsus* :rear-right-leg :inverse-kinematics
+            (make-coords :pos rear-right-pos)
+            :rotation-axis t
+        )
+        (send *excelsus* :rear-left-leg :inverse-kinematics
+            (make-coords :pos rear-left-pos)
+            :rotation-axis t
+        )
+        (send *excelsus* :front-right-leg :inverse-kinematics
+            (make-coords :pos front-right-pos)
+            :rotation-axis t
+        )
+        (send *excelsus* :front-left-leg :inverse-kinematics
+            (make-coords :pos front-left-pos)
+            :rotation-axis t
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
