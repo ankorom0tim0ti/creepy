@@ -1104,6 +1104,16 @@
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
 
+        ;; Intial Position
+        (setf (elt front-right-pos 0) (+ -130.0 (elt direction 0)))
+        (setf (elt front-right-pos 1) (+ -130.0 (elt direction 1)))
+        (setf (elt front-left-pos 0) (+ 130.0 (elt direction 0)))
+        (setf (elt front-left-pos 1) (+ -130.0 (elt direction 1)))
+        (setf (elt rear-right-pos 0) (+ -130.0 (elt direction 0)))
+        (setf (elt rear-right-pos 1) (+ 130.0 (elt direction 1)))
+        (setf (elt rear-left-pos 0) (+ 130.0 (elt direction 0)))
+        (setf (elt rear-left-pos 1) (+ 130.0 (elt direction 1)))
+
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
         (ros::ros-info "CRAW END")
