@@ -1048,6 +1048,7 @@
     ;; Turn of walk_flag
     (setf *walk_flag* t)
     (ros::ros-info "ELEVATE START")
+
     (let 
         (
             (front-right-pos #f(-130.0 -130.0 0.0)) 
@@ -1139,32 +1140,32 @@
 (defun walk-right-until-key ()
     (do-until-key
         (walk-right)
-    )
+    );; do-until-key 0
 );; function
 (defun walk-left-until-key ()
     (do-until-key
         (walk-left)
-    )
+    );; do-until-key 0
 );; function
 (defun walk-forward-until-key ()
     (do-until-key
         (walk-forward)
-    )
+    );; do-until-key 0
 );; function
 (defun walk-backward-until-key ()
     (do-until-key
         (walk-backward)
-    )
+    );; do-until-key 0
 );; function
 (defun walk-rotate-right-until-key ()
     (do-until-key
         (walk-rotate-right)
-    )
+    );; do-until-key 0
 );; function
 (defun walk-rotate-left-until-key ()
     (do-until-key
         (walk-rotate-left)
-    )
+    );; do-until-key 0
 );; function
 
 ;; Callback function for retrive command input
@@ -1173,35 +1174,36 @@
         (progn
             (ros::ros-info "walk-function was called")
             (let
-                ((linearx (send msg :linear :x))
-                (lineary (send msg :linear :y))
-                (linearz (send msg :linear :z))
-                (angularx (send msg :angular :x))
-                (angulary (send msg :angular :y))
-                (angularz (send msg :angular :z)))
+                (
+                    (linearx (send msg :linear :x))
+                    (lineary (send msg :linear :y))
+                    (linearz (send msg :linear :z))
+                    (angularx (send msg :angular :x))
+                    (angulary (send msg :angular :y))
+                    (angularz (send msg :angular :z))
+                )
                 (case linearx
                     (1.0 (walk-right))
                     (-1.0 (walk-left))
-                )
+                );; case 0
                 (case lineary
                     (1.0 (walk-forward))
                     (-1.0 (walk-backward))
-                )
+                );; case 0
                 (case linearz
                     (1.0 (elevate 20))
                     (-1.0 (elevate -20))
-                )
+                );; case 0
                 (case angularz
                     (-1.0 (walk-rotate-right))
                     (1.0 (walk-rotate-left))
-                )
+                );; case 0
                 (case angularx
                     (1.0 (stand-up))
-                )
-                ; (format t "~%Linear : ~a  Angular : ~a" linear angular)
-            )
-        )
-    )
+                );; case 0
+            );; let 0
+        );; prongn 0
+    );; if 0
 );; function
 
 ;; Callback function for recording value of foot sensors
