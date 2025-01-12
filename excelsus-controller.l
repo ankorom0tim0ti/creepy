@@ -1106,6 +1106,8 @@
             :cog-translation-axis :z
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+        (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Later Position
         (setf (elt front-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
@@ -1142,6 +1144,8 @@
             :cog-translation-axis :z
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+        (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ; Later Position
         (setf (elt front-right-pos 0) -130.0)
@@ -1178,6 +1182,8 @@
             :cog-translation-axis :z
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+        (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
