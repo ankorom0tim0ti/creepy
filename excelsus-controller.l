@@ -21,7 +21,7 @@
 (setq *walk_flag* nil)
 
 ;; Flag for judge rocomotion mode (walk / craw)
-(setq *WC_flag* nil)
+(setq *WC_flag* t)
 
 ;; Height of legs
 (setq *HFR* -60)
@@ -219,11 +219,17 @@
     (ros::ros-info "SIT DOWN END")
 );; function
 
+
+;; Function to switch rocomotion mode
 (defun switch-rocomotion ()
     (if (*WC_flag*)
         (progn
+            (sit-down)
+            (setf *WC_flag* nil)
         );; progn 0
         (progn
+            (stand-up)
+            (setf *WC_flag* t)
         );; progn 0
     );; if 0
 );; function
@@ -1180,7 +1186,8 @@
         (setf *walk_flag* nil)
         (ros::ros-info "CRAW END")
     );; let 0
-)
+);; function
+
 ;; Function for elevate body
 (defun elevate (height)
     ;; Turn of walk_flag
@@ -1347,6 +1354,9 @@
                 );; case 0
                 (case angularx
                     (1.0 (stand-up))
+                );; case 0
+                (case angulary
+                    (1.0 (switch-rocomotion))
                 );; case 0
             );; let 0
         );; prongn 0
