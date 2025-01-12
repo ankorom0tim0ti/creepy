@@ -1049,10 +1049,10 @@
     (let 
         (
             ;; Target points of each legs
-            (front-right-pos #f(0.0 0.0 10.0))
-            (front-left-pos #f(0.0 0.0 10.0))
-            (rear-right-pos #f(0.0 0.0 10.0))
-            (rear-left-pos #f(0.0 0.0 10.0))
+            (front-right-pos #f(0.0 0.0 20.0))
+            (front-left-pos #f(0.0 0.0 20.0))
+            (rear-right-pos #f(0.0 0.0 20.0))
+            (rear-left-pos #f(0.0 0.0 20.0))
 
             ;; Move length
             (diff 40)
@@ -1063,10 +1063,10 @@
         (ros::ros-info "CRAW START")
 
         ;; pose 1
-        (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
-                                        45.0 0.0 30.0 -45.0 0.0 
-                                        45.0 0.0 30.0 -45.0 0.0 
-                                        45.0 0.0 30.0 -45.0 0.0))
+        (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 
+                                    45.0 0.0 90.0 -90.0 0.0 ))
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
