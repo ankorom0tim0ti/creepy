@@ -1096,6 +1096,7 @@
     nil );; let 0
 );; function
 
+;; Function for crawing
 (defun craw (direction)
     (let 
         (
@@ -1200,6 +1201,13 @@
         (setf *walk_flag* nil)
         (ros::ros-info "CRAW END")
     );; let 0
+);; function
+
+;; Function for waving leg
+(defun wave-leg ()
+    (send *excelsus* :front-right-leg :move-end-pos #f(0 0 40))
+    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+    (send *ri* :wait-interpolation)
 );; function
 
 ;; Function for elevate body
