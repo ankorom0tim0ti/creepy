@@ -1049,10 +1049,10 @@
     (let 
         (
             ;; Target points of each legs
-            (front-right-pos #f(0.0 0.0 -10.0))
-            (front-left-pos #f(0.0 0.0 -10.0))
-            (rear-right-pos #f(0.0 0.0 -10.0))
-            (rear-left-pos #f(0.0 0.0 -10.0))
+            (front-right-pos #f(0.0 0.0 10.0))
+            (front-left-pos #f(0.0 0.0 10.0))
+            (rear-right-pos #f(0.0 0.0 10.0))
+            (rear-left-pos #f(0.0 0.0 10.0))
 
             ;; Move length
             (diff 40)
@@ -1262,25 +1262,34 @@
 (defun walk-right ()
     (walk #f(-1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0) (list 0 2 3 1) 32 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 );; function
-
 (defun walk-left ()
     (walk #f(1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0) (list 3 1 0 2) 32 6) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 );; function
-
 (defun walk-forward ()
     (walk #f(0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0) (list 1 0 2 3) 30 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 );; function
-
 (defun walk-backward ()
     (walk #f(0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0) (list 2 3 1 0) 30 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 );; function
-
 (defun walk-rotate-right ()
     (walk-rotate #f(-47.6 82.4 -82.4 -47.6 82.4 47.6 47.6 -82.4) (list 0 2 3 1) 0.4 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
 );; function
-
 (defun walk-rotate-left ()
     (walk-rotate #f(82.4 -47.6 47.6 82.4 -47.6 -82.4 -82.4 47.6) (list 0 2 3 1) 0.4 4) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
+);; function
+
+;; Functions for crawing toward specified direction
+(defun craw-right ()
+    (craw `(-1.0 0.0))
+);; function
+(defun craw-left ()
+    (craw `(1.0 0.0))
+);; function
+(defun craw-forward ()
+    (craw `(0.0 -1.0))
+);; function
+(defun craw-backward ()
+    (craw `(0.0 1.0))
 );; function
 
 ;; Functions for specified actions
