@@ -1071,14 +1071,14 @@
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Former Position
-        (setf (elt front-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
-        (setf (elt front-right-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
-        (setf (elt front-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
-        (setf (elt front-left-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
-        (setf (elt rear-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
-        (setf (elt rear-right-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
-        (setf (elt rear-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
-        (setf (elt rear-left-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt front-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
+        (setf (elt front-right-pos 1) (+ -130.0 (* diff (elt direction 1))))
+        (setf (elt front-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
+        (setf (elt front-left-pos 1) (+ -130.0 (* diff (elt direction 1))))
+        (setf (elt rear-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
+        (setf (elt rear-right-pos 1) (+ 130.0 (* diff (elt direction 1))))
+        (setf (elt rear-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
+        (setf (elt rear-left-pos 1) (+ 130.0 (* diff (elt direction 1))))
 
         ;; Calculate inverse kinematics
         (send *excelsus* :rear-right-leg :inverse-kinematics
@@ -1103,14 +1103,14 @@
         (ros::ros-info "CRAW START2")
 
         ;; Later Position
-        (setf (elt front-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
-        (setf (elt front-right-pos 1) (+ -130.0 (* diff (elt direction 1))))
-        (setf (elt front-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
-        (setf (elt front-left-pos 1) (+ -130.0 (* diff (elt direction 1))))
-        (setf (elt rear-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
-        (setf (elt rear-right-pos 1) (+ 130.0 (* diff (elt direction 1))))
-        (setf (elt rear-left-pos 0) (+ 130.0 (* diff (elt direction 0))))
-        (setf (elt rear-left-pos 1) (+ 130.0 (* diff (elt direction 1))))
+        (setf (elt front-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt front-right-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt front-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt front-left-pos 1) (+ -130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt rear-right-pos 0) (+ -130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt rear-right-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
+        (setf (elt rear-left-pos 0) (+ 130.0 (* (* -1 diff) (elt direction 0))))
+        (setf (elt rear-left-pos 1) (+ 130.0 (* (* -1 diff) (elt direction 1))))
 
         (send *excelsus* :fullbody-inverse-kinematics
             (list
