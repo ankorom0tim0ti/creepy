@@ -20,6 +20,9 @@
 ;; Flag for judge whether excelsus is walking or not
 (setq *walk_flag* nil)
 
+;; Flag for judge whether mode (rocomotion / dance)
+(setq *RD_flag* t)
+
 ;; Flag for judge rocomotion mode (walk / craw)
 (setq *WC_flag* t)
 
@@ -219,6 +222,17 @@
     (ros::ros-info "SIT DOWN END")
 );; function
 
+;; Function to switch mode rocomotion or dance
+(defun switch-rocomotion-dance ()
+    (if (not *RD_flag*)
+        (progn
+            (setf *RD_flag* t)
+        );; progn 0
+        (progn
+            (setf *RD_flag* nil)
+        );; progn 0
+    );; if 0
+);; function
 
 ;; Function to switch rocomotion mode
 (defun switch-rocomotion ()
@@ -1337,26 +1351,27 @@
                     (angularz (send msg :angular :z))
                 )
                 (case linearx
-                    (1.0 (if *WC_flag* (walk-right) (craw-right)))
-                    (-1.0 (if *WC_flag* (walk-left) (craw-left)))
+                    (1.0 (if *RD_flag* (if *WC_flag* (walk-right) (craw-right))))
+                    (-1.0 (if *RD_flag* (if *WC_flag* (walk-left) (craw-left))))
                 );; case 0
                 (case lineary
-                    (1.0 (if *WC_flag* (walk-forward) (craw-forward)))
-                    (-1.0 (if *WC_flag* (walk-backward) (craw-backward)))
+                    (1.0 (if *RD_flag* (if *WC_flag* (walk-forward) (craw-forward))))
+                    (-1.0 (if *RD_flag* (if *WC_flag* (walk-backward) (craw-backward))))
                 );; case 0
                 (case linearz
-                    (1.0 (if *WC_flag* (elevate 20)))
-                    (-1.0 (if *WC_flag* (elevate -20)))
+                    (1.0 (if *RD_flag* (if *WC_flag* (elevate 20))))
+                    (-1.0 (if *RD_flag* (if *WC_flag* (elevate -20))))
                 );; case 0
                 (case angularz
-                    (-1.0 (if *WC_flag* (walk-rotate-right)))
-                    (1.0 (if *WC_flag* (walk-rotate-left)))
+                    (-1.0 (if *RD_flag* (if *WC_flag* (walk-rotate-right))))
+                    (1.0 (if *RD_flag* (if *WC_flag* (walk-rotate-left))))
                 );; case 0
                 (case angularx
-                    (1.0 (stand-up))
+                    (1.0 (if *RD_flag* (stand-up)))
                 );; case 0
                 (case angulary
-                    (1.0 (switch-rocomotion))
+                    (1.0 (if *RD_flag* (switch-rocomotion)))
+                    (-1.0 (switch-rocomotion-dance))
                 );; case 0
             );; let 0
         );; prongn 0
