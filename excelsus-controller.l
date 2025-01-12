@@ -561,6 +561,7 @@
             );; let 1
         );; dotimes 0
 
+        ;; Specify target position of legs at the initial position
         (setf (elt front-right-pos 0) -130)
         (setf (elt front-right-pos 1) 130)
         (setf (elt front-right-pos 2) -60)
@@ -574,7 +575,7 @@
         (setf (elt rear-left-pos 1) -130)
         (setf (elt rear-left-pos 2) -60)
 
-        ;; Reset pose
+        ;; Calculate inverse kinematics
         (send *excelsus* :fullbody-inverse-kinematics
             (list
                 (make-coords :pos front-right-pos)
@@ -596,13 +597,12 @@
                 (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
                 (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
             )
-            ; :translation-axis (list t t t t)
-            ; :rotation-axis (list t t t t)
             :target-centroid-pos #f(0 0 0)
             :cog-translation-axis t
             :root-link-virtual-joint-weight #f(1.0 1.0 1.0 0 0 0)
-            
         )
+
+        ;; Modify height of legs according to *HFR*, *HFL*, *HRR* and *HRL*
         (setf (elt front-right-dif 2) (- *HFR* -60))
         (setf (elt front-left-dif 2) (- *HFL* -60))
         (setf (elt rear-right-dif 2) (- *HRR* -60))
@@ -611,9 +611,9 @@
         (send *excelsus* :front-left-leg :move-end-pos front-left-dif)
         (send *excelsus* :rear-right-leg :move-end-pos rear-right-dif)
         (send *excelsus* :rear-left-leg :move-end-pos rear-left-dif)
-        ; (send *excelsus* :angle-vector #f(46.9764 2.40906 16.1589 -13.7483 46.9762 47.6174 2.62926 16.2842 -13.6534 47.6172 47.8289 3.1044 16.7837 -13.6777 47.8287 47.1906 2.88624 16.6589 -13.7711 -47.1904)) ;; angle-vector of stand up state
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation)
+
         (ros::ros-info "STEP END")
         (setf *walk_flag* nil)
     nil );; let 0
