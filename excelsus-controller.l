@@ -90,7 +90,8 @@
 
 ;; Function to multiple float vector with scalar value
 (defun scalar-multiply-float-vector (vec scalar)
-    (let ((result (make-array (length vec) :element-type 'float)))
+    (let 
+        ((result (make-array (length vec) :element-type 'float)))
         (dotimes (i (length vec))
             (setf (aref result i) (* (aref vec i) scalar))
         );; dotimes 0
@@ -189,52 +190,81 @@
     (setf *HRR* -60)
     (setf *HRL* -60)
 
+    ;; Turn off walk_flag
     (setf *walk_flag* nil)
     (ros::ros-info "STAND UP END")
 );; function
 
 ;; Function for walking
 (defun walk (mixing order move_leg move_center)
+    ;; Turn on walk_flag
     (setf *walk_flag* t)   
-    (ros::ros-info "STEP START")
+    (ros::ros-info "WALK START")
+
+    ;; Return the height of the aircraft to the specified value
     (elevate 0)
+
+    ;; Verify the input format
     (unless (and (= (length mixing) 8) (= (length order) 4))
         (error "Length of inpute vector was mismatched"))
-    (let ((startpoint (copy-seq #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0))) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
-        (centerpoint #f(0.0 0.0 0.0))
-        (endpoint (v+  #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0) (scalar-multiply-float-vector mixing move_leg)))
-        (front-right-pos #f(0.0 0.0 -60.0))
-        (front-left-pos #f(0.0 0.0 -60.0))
-        (rear-right-pos #f(0.0 0.0 -60.0))
-        (rear-left-pos #f(0.0 0.0 -60.0))
-        (front-right-dif #f(0.0 0.0 0.0))
-        (front-left-dif #f(0.0 0.0 0.0))
-        (rear-right-dif #f(0.0 0.0 0.0))
-        (rear-left-dif #f(0.0 0.0 0.0)))
+    
+    ;; Move legs
+    (let 
+        (
+            (startpoint (copy-seq #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0))) ;; (FR_X FR_Y FL_X FL_Y RR_X RR_Y RL_X RL_Y)
+            (centerpoint #f(0.0 0.0 0.0)) ;; center of mass position
+            (endpoint (v+  #f(-130.0 -130.0 130.0 -130.0 -130.0 130.0 130.0 130.0) (scalar-multiply-float-vector mixing move_leg))) ;; Target points of legs
+            
+            ;; Target points of each legs
+            (front-right-pos #f(0.0 0.0 -60.0))
+            (front-left-pos #f(0.0 0.0 -60.0))
+            (rear-right-pos #f(0.0 0.0 -60.0))
+            (rear-left-pos #f(0.0 0.0 -60.0))
+
+            ;; Moving vectors of each legs
+            (front-right-dif #f(0.0 0.0 0.0))
+            (front-left-dif #f(0.0 0.0 0.0))
+            (rear-right-dif #f(0.0 0.0 0.0))
+            (rear-left-dif #f(0.0 0.0 0.0))
+        )
+
         ;; Move each leg
         (dotimes (i 4)
-            (let ((leg_index (elt order i)))
+            (let 
+                ((leg_index (elt order i)))
                 (setf (elt startpoint (* 2 leg_index)) (elt endpoint (* 2 leg_index))) ;; set x
                 (setf (elt startpoint (+ (* 2 leg_index) 1)) (elt endpoint (+ (* 2 leg_index) 1))) ;; set y
                 (case leg_index
-                    (0 (setf  centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos))) 
-                    (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (1 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (2 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (3 (setf centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos)))
-                    (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
-                    (setf (elt centerpoint 2) 0))
-                    (t (error "Why is this called?"))
-                ) ;; set center point and this would need to change --------------------------------------------------------------------
+                    (0 
+                        (setf  centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos))) 
+                        (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (1 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (+ (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (2 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-right-leg :end-coords :worldpos) (send *excelsus* :rear-left-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (+ (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (3 
+                        (setf centerpoint (midpoint 0.5 (send *excelsus* :front-left-leg :end-coords :worldpos) (send *excelsus* :rear-right-leg :end-coords :worldpos)))
+                        (setf (elt centerpoint 0) (- (elt centerpoint 0) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 1) (- (elt centerpoint 1) (+ move_center (* 1.2 (* (- i 1.5) (- i 1.5) )))))
+                        (setf (elt centerpoint 2) 0)
+                    )
+                    (t 
+                        (error "Why is this called?")
+                    )
+                );; case 0
+
+                ;; ssign the target position of the leg
                 (setf (elt front-right-pos 0) (elt startpoint 0))
                 (setf (elt front-right-pos 1) (elt startpoint 1))
                 (setf (elt front-left-pos 0) (elt startpoint 2))
@@ -243,7 +273,7 @@
                 (setf (elt rear-right-pos 1) (elt startpoint 5))
                 (setf (elt rear-left-pos 0) (elt startpoint 6))
                 (setf (elt rear-left-pos 1) (elt startpoint 7))
-                ; (format t "~%MoveLeg: ~a" centerpoint)
+
                 (send *excelsus* :fullbody-inverse-kinematics
                     (list
                         (make-coords :pos front-right-pos)
@@ -444,8 +474,8 @@
                 ;; (send *irtviewer* :draw-objects)
                 (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
                 (send *ri* :wait-interpolation)
-            )
-        )
+            );; let 1
+        );; dotimes 0
 
         (setf (elt front-right-pos 0) -130)
         (setf (elt front-right-pos 1) 130)
@@ -502,7 +532,7 @@
         (send *ri* :wait-interpolation)
         (ros::ros-info "STEP END")
         (setf *walk_flag* nil)
-    nil )
+    nil );; let 0
 );; function
 
 ;; Function for walking rotation
