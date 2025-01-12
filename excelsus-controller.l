@@ -1103,7 +1103,7 @@
                 (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
             )
             :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis :z
+            :cog-translation-axis nil
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
@@ -1141,7 +1141,7 @@
                 (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
             )
             :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis :z
+            :cog-translation-axis nil
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
@@ -1179,7 +1179,7 @@
                 (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
             )
             :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis :z
+            :cog-translation-axis nil
             :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
