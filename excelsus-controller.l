@@ -222,14 +222,14 @@
 
 ;; Function to switch rocomotion mode
 (defun switch-rocomotion ()
-    (if (*WC_flag*)
-        (progn
-            (sit-down)
-            (setf *WC_flag* nil)
-        );; progn 0
+    (if (not *WC_flag*)
         (progn
             (stand-up)
             (setf *WC_flag* t)
+        );; progn 0
+        (progn
+            (sit-down)
+            (setf *WC_flag* nil)
         );; progn 0
     );; if 0
 );; function
