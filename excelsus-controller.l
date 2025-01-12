@@ -1100,6 +1100,8 @@
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
+        (ros::ros-info "CRAW START2")
+
         ;; Later Position
         (setf (elt front-right-pos 0) (+ -130.0 (* diff (elt direction 0))))
         (setf (elt front-right-pos 1) (+ -130.0 (* diff (elt direction 1))))
@@ -1132,11 +1134,13 @@
                 (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
             )
             :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis nil
+            :cog-translation-axis :z
             ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
+        (ros::ros-info "CRAW START3")
 
         ; Later Position
         (setf (elt front-right-pos 0) -130.0)
@@ -1170,7 +1174,7 @@
                 (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
             )
             :target-centroid-pos #f(0.0 0.0 0.0)
-            :cog-translation-axis nil
+            :cog-translation-axis :z
             ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
         (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
