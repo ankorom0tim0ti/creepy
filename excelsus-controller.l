@@ -1046,48 +1046,68 @@
 );; function
 
 (defun craw (direction)
-    ;; Turn on walk_flag
-    (setf *walk_flag* t)
-    (ros::ros-info "CRAW START")
+    (let 
+        (
+            ;; Target points of each legs
+            (front-right-pos #f(0.0 0.0 -60.0))
+            (front-left-pos #f(0.0 0.0 -60.0))
+            (rear-right-pos #f(0.0 0.0 -60.0))
+            (rear-left-pos #f(0.0 0.0 -60.0))
+        )
 
-    ;; pose 1
-    (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
-                                    45.0 0.0 90.0 -90.0 0.0 
-                                    45.0 0.0 90.0 -90.0 0.0 
-                                    45.0 0.0 90.0 -90.0 0.0 ))
-    (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
-    (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+        ;; Turn on walk_flag
+        (setf *walk_flag* t)
+        (ros::ros-info "CRAW START")
 
-    ;; 
-    (send *excelsus* :fullbody-inverse-kinematics
-        (list
-            (make-coords :pos front-right-pos)
-            (make-coords :pos front-left-pos)
-            (make-coords :pos rear-right-pos)
-            (make-coords :pos rear-left-pos)
+        ;; pose 1
+        (send *excelsus* :angle-vector #f(45.0 0.0 30.0 -45.0 0.0 
+                                        45.0 0.0 30.0 -45.0 0.0 
+                                        45.0 0.0 30.0 -45.0 0.0 
+                                        45.0 0.0 30.0 -45.0 0.0))
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) *duaration* :default-controller 0 :min-time 0.05)
+        (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
+        ;; Intial Position
+        (setf (elt front-right-pos 0) -130.0)
+        (setf (elt front-right-pos 1) -130.0)
+        (setf (elt front-left-pos 0) 130.0)
+        (setf (elt front-left-pos 1) -130.0)
+        (setf (elt rear-right-pos 0) -130.0)
+        (setf (elt rear-right-pos 1) 130.0)
+        (setf (elt rear-left-pos 0) 130.0)
+        (setf (elt rear-left-pos 1) 130.0)
+
+        ;; Calculate inverse kinematics
+        (send *excelsus* :fullbody-inverse-kinematics
+            (list
+                (make-coords :pos front-right-pos)
+                (make-coords :pos front-left-pos)
+                (make-coords :pos rear-right-pos)
+                (make-coords :pos rear-left-pos)
+            )
+            :move-target
+            (list
+                (send *excelsus* :front-right-leg :end-coords)
+                (send *excelsus* :front-left-leg :end-coords)
+                (send *excelsus* :rear-right-leg :end-coords)
+                (send *excelsus* :rear-left-leg :end-coords)
+            )
+            :link-list
+            (list
+                (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :rear-right-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
+            )
+            :target-centroid-pos centerpoint
+            :cog-translation-axis :z
+            :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
-        :move-target
-        (list
-            (send *excelsus* :front-right-leg :end-coords)
-            (send *excelsus* :front-left-leg :end-coords)
-            (send *excelsus* :rear-right-leg :end-coords)
-            (send *excelsus* :rear-left-leg :end-coords)
-        )
-        :link-list
-        (list
-            (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
-            (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
-            (send *excelsus* :link-list (send *excelsus* :rear-right-leg :end-coords :parent))
-            (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
-        )
-        :target-centroid-pos centerpoint
-        :cog-translation-axis :z
-        :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
+
+        ;; Turn off walk_flag
+        (setf *walk_flag* nil)
+        (ros::ros-info "CRAW END")
     )
-
-    ;; Turn off walk_flag
-    (setf *walk_flag* nil)
-    (ros::ros-info "CRAW END")
 )
 ;; Function for elevate body
 (defun elevate (height)
