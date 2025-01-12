@@ -113,6 +113,7 @@
     ;; Turn on walk_flag
     (setf *walk_flag* t)
 
+    ;; pose 1
     (send *excelsus* :angle-vector #f(45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
                                     45.0 0.0 90.0 -90.0 0.0 
