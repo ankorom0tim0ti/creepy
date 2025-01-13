@@ -1214,7 +1214,7 @@
             (rear-left-pos #f(0.0 0.0 -60.0))
 
             ;; Move length
-            (diff 15)
+            (diff 10)
         )
 
         ;; Turn on walk_flag
