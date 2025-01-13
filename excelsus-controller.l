@@ -1214,12 +1214,12 @@
             (rear-left-pos #f(0.0 0.0 -60.0))
 
             ;; Move length
-            (diff 10)
+            (diff 15)
         )
 
         ;; Turn on walk_flag
         (setf *walk_flag* t)
-        (ros::ros-info "CRAW START")
+        (ros::ros-info "WAVE START")
 
         ;; Former Position
         (setf (elt front-right-pos 0) (+ -130.0 diff))
@@ -1261,7 +1261,7 @@
             :cog-translation-axis :y
             ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
-        (send *ri* :angle-vector (send *excelsus* :angle-vector) 200 :default-controller 0 :min-time 0.05)
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) 100 :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Former Position
@@ -1304,7 +1304,7 @@
             :cog-translation-axis :y
             ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
-        (send *ri* :angle-vector (send *excelsus* :angle-vector) 200 :default-controller 0 :min-time 0.05)
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) 100 :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Later Position
@@ -1346,12 +1346,12 @@
             :cog-translation-axis :y
             ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
         )
-        (send *ri* :angle-vector (send *excelsus* :angle-vector) 200 :default-controller 0 :min-time 0.05)
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) 100 :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
-        (ros::ros-info "CRAW END")
+        (ros::ros-info "WAVE END")
     );; let 0
 );; function
 
