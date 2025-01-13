@@ -1349,6 +1349,49 @@
         (send *ri* :angle-vector (send *excelsus* :angle-vector) 50 :default-controller 0 :min-time 0.05)
         (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
 
+        ;; Former Position
+        (setf (elt front-right-pos 0) (+ -130.0 0.0))
+        (setf (elt front-right-pos 1) (+ -130.0 0.0))
+        (setf (elt front-right-pos 2) -40)
+        (setf (elt front-left-pos 0) (+ 130.0 0.0))
+        (setf (elt front-left-pos 1) (+ -130.0 0.0))
+        (setf (elt front-left-pos 2) -40)
+        (setf (elt rear-right-pos 0) (+ -130.0 0.0))
+        (setf (elt rear-right-pos 1) (+ 130.0 0.0))
+        (setf (elt rear-right-pos 2) -40)
+        (setf (elt rear-left-pos 0) (+ 130.0 0.0))
+        (setf (elt rear-left-pos 1) (+ 130.0 0.0))
+        (setf (elt rear-left-pos 2) -40)
+
+        ;; Calculate inverse kinematics
+        (send *excelsus* :fullbody-inverse-kinematics
+            (list
+                (make-coords :pos front-right-pos)
+                (make-coords :pos front-left-pos)
+                (make-coords :pos rear-right-pos)
+                (make-coords :pos rear-left-pos)
+            )
+            :move-target
+            (list
+                (send *excelsus* :front-right-leg :end-coords)
+                (send *excelsus* :front-left-leg :end-coords)
+                (send *excelsus* :rear-right-leg :end-coords)
+                (send *excelsus* :rear-left-leg :end-coords)
+            )
+            :link-list
+            (list
+                (send *excelsus* :link-list (send *excelsus* :front-right-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :front-left-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :rear-right-leg :end-coords :parent))
+                (send *excelsus* :link-list (send *excelsus* :rear-left-leg :end-coords :parent))
+            )
+            :target-centroid-pos #f(0.0 0.0 0.0)
+            :cog-translation-axis :y
+            ; :root-link-virtual-joint-weight #f(100.0 100.0 100.0 0 0 0)
+        )
+        (send *ri* :angle-vector (send *excelsus* :angle-vector) 50 :default-controller 0 :min-time 0.05)
+        (send *ri* :wait-interpolation) ;; this let code to wait until finishing taking pose
+
         ;; Turn off walk_flag
         (setf *walk_flag* nil)
         (ros::ros-info "WAVE END")
