@@ -1344,6 +1344,15 @@
     );; do-until-key 0
 );; function
 
+;; function for controlling from the controller
+(defun dominant ()
+    (do-until-key
+        ;; read sensor value once
+        (ros::spin-once)
+        (ros::sleep)
+    );; do-until-key 0
+);; function 
+
 ;; Callback function for retrive command input
 (defun cmd_cb (msg)
     (if (not *walk_flag*)
@@ -1490,9 +1499,5 @@
 (stand-up)
 (ros::ros-info "Excelsus take initial position")
 
-;; Main loo@
-(do-until-key
-    ;; read sensor value once
-    (ros::spin-once)
-    (ros::sleep)
-);; do-until-key 0
+;; Main loop
+(dominant)
